@@ -36,11 +36,16 @@ def set_logger_name(name):
 
 
 def pos_inf(dtype):
-    return torch.finfo(dtype).max
+    # Use actual infinity to avoid overflow when converting to lower precision
+    # dtypes such as bfloat16. torch.finfo(dtype).max may exceed the representable
+    # range for some dtypes when converted from Python floats.
+    return float("inf")
 
 
 def neg_inf(dtype):
-    return torch.finfo(dtype).min
+    # Similar to ``pos_inf``, use negative infinity to ensure the value can be
+    # safely converted to any dtype without overflow.
+    return float("-inf")
 
 
 def small_val(dtype):
